@@ -36,8 +36,6 @@ def compute_fft(audio, sr, n_fft: int = None, hop_length: int = None):
     ##########################
 
     # fft is used for its O(nlog(n)) time complexity, vs dft's O(n^2) complexity
-    # TODO: this could be done manually for understanding, then later on in the project
-    #       signal.stft could be introduced for speed and versatility
     frequencies, times, stft = signal.stft(audio, fs=sr, 
                                            window="hamming",
                                            nperseg=fft_window_size,
@@ -65,15 +63,8 @@ def preprocess_audio(audio_path, sr = 11_025):
     """
     returns `(audio, sr)`
 
-    11025 Hz
-    44100 Hz
-
-    Note: using mp3 prevents reading file blob directly
-          using BytesIO stream, we have to save it to a
-          temp file first (audio_path = BytesIO(...wavfile...)
-          does work though)
+    Common resampling rates: 11025 Hz, 44100 Hz
     """
-    # resample to 11 kHz (11,025 Hz)
     # uses a low pass filter to filter the higher frequencies to avoid aliasing (Nyquist-Shannon)
     # then takes sequential samples of size 4 and keeps the first of each ("decimate")
     audio, sr = librosa.load(audio_path, sr=sr)
@@ -81,20 +72,20 @@ def preprocess_audio(audio_path, sr = 11_025):
     ## equivalent to:
     #max_freq_cutoff = 5512 # Hz
     ## Calculate the new sampling rate (at least twice the cutoff frequency)
-    #new_sr = max_freq_cutoff * 2
-    #new_sr += 1  # = 11025 to match librosa documentation / Chigozirim vid
+    #new_sr = (max_freq_cutoff * 2) + 1
     ## Resample the audio, which implicitly applies a low-pass filter
     #y_filtered = librosa.resample(y=audio, orig_sr=Fs, target_sr=new_sr, res_type='kaiser_best')
+    #
+    #sr = 11025
+    #max_freq_cutoff = np.floor(sr/2)
 
     return audio, sr
 
 def add_noise(audio, noise_weight: float = 0.5):
 
-    # BONUS: add noise to a file
     # brownian noise: x(n+1) = x(n) + w(n)
     #                 w(n) = N(0,1)
 
-    #audio, sr = librosa.load(audio_path, sr=None) 
     def peak_normalize(x):
         # Normalize the audio to be within the range [-1, 1]
         return x / np.max(np.abs(x))
