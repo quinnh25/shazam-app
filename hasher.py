@@ -3,6 +3,7 @@ from scipy import signal
 
 # TODO: Finish this function to compute the hash of two peaks
 def create_address(anchor: tuple[int, int], target: tuple[int, int], sr: int) -> int:
+    
     # get relevant information from the anchor and target points
     anchor_freq = anchor[1]
     target_freq = target[1]
