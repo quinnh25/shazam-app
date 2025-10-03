@@ -4,10 +4,10 @@ from scipy import signal
 # TODO: Finish this function to compute the hash of two peaks
 def create_address(anchor: tuple[int, int], target: tuple[int, int], sr: int) -> int:
     
-    # get relevant information from the anchor and target points
-    anchor_freq = anchor[1]
-    target_freq = target[1]
-    deltaT = target[0] - anchor[0]
+    # TODO: get relevant information from the anchor and target points
+    anchor_freq = None
+    target_freq = None
+    deltaT = None
 
     ##############################################
     # Creating a 32 bit hash f1:f2:dt (2002 paper)
@@ -26,11 +26,12 @@ def create_address(anchor: tuple[int, int], target: tuple[int, int], sr: int) ->
     anchor_freq = (anchor_freq / max_frequency) * (2 ** n_bits)
     target_freq = (target_freq / max_frequency) * (2 ** n_bits)
     
-    # bit shifting to obtain 32 bit hash
+    # TODO: compute the hash using bitwise operations
+    # Hint: bit shifting to obtain 32 bit hash
     # int(anchor_freq)         occupies bits 0-9,    anchor_freq <= 1023
     # int(target_freq) << 10   occupies bits 10-19,  target_freq <= 1023
     # int(deltaT) << 20        occupies bits 20-31,  deltaT <= 4095
-    hash = int(anchor_freq) | (int(target_freq) << 10) | (int(deltaT) << 20)
+    hash = None
     return hash
 
 def create_hashes(peaks, song_id: int = None, sr: int = None, fanout_t=100, fanout_f=3000):
@@ -40,6 +41,9 @@ def create_hashes(peaks, song_id: int = None, sr: int = None, fanout_t=100, fano
 
         = number of timesteps forward from anchor to use for target points
     """
+    # Use a dictionary to store the fingerprints
+    # Dictionary structure: {hash: (time, song_id)}
+    # Dictionaries store key, value pairs allowing for fast lookup based on the key (hash)
     fingerprints = {}
     
     # iterate through each anchor point in the constellation map
@@ -62,8 +66,8 @@ def create_hashes(peaks, song_id: int = None, sr: int = None, fanout_t=100, fano
                 break
             
             address = create_address(anchor, target, sr)
-            anchorT = anchor[0]
 
-            fingerprints[address] = (int(anchorT), song_id)
+            # TODO: store the hash in our frequencies dictrionary
+            # Hint: use the address as the key, and (time, song_id) as the value
             
     return fingerprints

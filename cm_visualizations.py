@@ -82,3 +82,10 @@ def visualize_map_interactive(audio_path):
     # This line is needed to save the interactive plot as an HTML file when working on WSL
     # Use this command in the terminal to open:  explorer.exe my_spectrogram.html
     # fig.write_html("my_spectrogram.html")
+    
+if __name__ == "__main__":
+    
+    # Lets visualize the constellation map for a sample audio file
+    # based on the functions you have implemented in const_map.py
+    audio_path = "audio_samples/sample.wav"
+    visualize_map_interactive(audio_path)

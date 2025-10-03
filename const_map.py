@@ -18,19 +18,16 @@ def peaks_are_duplicate(peak1: tuple[int, float] = None, peak2: tuple[int,float]
 
 # Function to remove duplicate peaks that are too close to each other
 def remove_duplicate_peaks(peaks: list[tuple[int, float]]):
-    
     # create a copy of the peaks list to avoid modifying the original list
-    peaks=peaks.copy()
-    peaks.sort(key=lambda x: x[0])
-    # for each peak, search for duplicates within the next 10 peaks (ordered by time)
-    for i in range(len(peaks)):
-        for j in range(len(peaks[i:min(i+15, len(peaks)-1)])):
-            j = j+i+1
-            if peaks_are_duplicate(peaks[i], peaks[j]):
-                peaks[j] = None
-                
-    #
-    return [peak for peak in peaks if peak is not None]
+    peaksc=peaks.copy()
+    
+    # TODO: sort peaks by time
+
+    
+    # TODO: for each peak, search for duplicates within the next 15 peaks (ordered by time)
+    
+
+    return peaksc
 
 
 def find_peaks(frequencies, times, magnitude,
