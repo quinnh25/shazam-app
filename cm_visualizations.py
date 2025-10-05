@@ -85,7 +85,6 @@ def visualize_map_interactive(audio_path):
     
 if __name__ == "__main__":
     
-    # Lets visualize the constellation map for a sample audio file
-    # based on the functions you have implemented in const_map.py
-    audio_path = "audio_samples/sample.wav"
+    # TODO: replace the path below with an audio file from audio samples folder
+    audio_path = "audio_samples/pb_recording_short.wav"
     visualize_map_interactive(audio_path)
