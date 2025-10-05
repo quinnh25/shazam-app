@@ -13,6 +13,8 @@ Solutions are in test_spec\_"audio_name".html
 
 3. Complete TODOs in hasher.py to implement our function for fingerprinting
 
+4. Use test_hash.py to test your hash creation. Check pb_short_hashed.txt for answers/
+
 - MDST Shazam Library - [download zip file here](https://drive.google.com/drive/folders/1Ui7o23sJjZB6tYUnoAffurmK0YB5nRVv?usp=sharing)
 
 ## Loading audio data:
