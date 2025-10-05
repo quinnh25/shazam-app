@@ -46,14 +46,17 @@ def create_hashes(peaks, song_id: int = None, sr: int = None, fanout_t=100, fano
     # Dictionaries store key, value pairs allowing for fast lookup based on the key (hash)
     fingerprints = {}
     
+    # TODO: The loop is implemeted for you but try to understand the intuition behind it yourself
+
     # iterate through each anchor point in the constellation map
     for i, anchor in enumerate(peaks):
         # iterate through each point in target zone for that anchor point
         for j in range(i+1, len(peaks)):
-            # select targets from a zone in front of the anchor point
-            target = peaks[j]
-            time_diff = target[0] - anchor[0]
-            freq_diff = target[1] - anchor[1]
+            # TODO: select targets to compare to from a zone in front of the anchor point
+            # get the time and frequency difference as well
+            target = None
+            time_diff = None
+            freq_diff = None
 
             # determine if peak is within target zone
             if time_diff <= 1:
