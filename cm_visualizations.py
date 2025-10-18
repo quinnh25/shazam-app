@@ -77,11 +77,11 @@ def visualize_map_interactive(audio_path):
         ]
     )
 
-    fig.show()
+    # fig.show()
     
     # This line is needed to save the interactive plot as an HTML file when working on WSL
     # Use this command in the terminal to open:  explorer.exe my_spectrogram.html
-    # fig.write_html("my_spectrogram.html")
+    fig.write_html("my_spectrogram.html")
     
 if __name__ == "__main__":
     
