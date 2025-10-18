@@ -142,26 +142,28 @@ def retrieve_hashes(hash_val: int, cursor) -> tuple[int, int, int]|None:
     return result
 
 def create_tables():
-    if system == "Darwin" or system == "Linux":
-        con = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="password"
-        )
-    else:
-        #load_dotenv(dotenv_path='/home/evanteal15/F25-Shazam-Clone/env/.env')
+    # if system == "Darwin" or system == "Linux":
+    #     con = mysql.connector.connect(
+    #         host="localhost",
+    #         user="root",
+    #         password="password"
+    #     )
+    # else:
+    #     #load_dotenv(dotenv_path='/home/evanteal15/F25-Shazam-Clone/env/.env')
         
-        #server = 'tcp:shazesq.database.windows.net,1433'
-        #database = 'shazamesque'
-        #username = os.getenv('USER_NAME')
-        #password = os.getenv('THE_PASSWORD')
-        #driver = '{ODBC Driver 18 for SQL Server}'
-        #connection_string = f"DRIVER={driver};SERVER={server};UID={username};PWD={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-        ## Driver={ODBC Driver 18 for SQL Server};Server=tcp:shazesq.database.windows.net,1433;Database=shazamesque;Uid=CloudSAce2ffd30;Pwd={your_password_here};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;
-        #con = pyodbc.connect(connection_string)
-        print("========================================================")
-        print("Windows: `CREATE DATABASE shazamesque;` and run sql/schema.sql manually")
-        raise OSError
+    #     #server = 'tcp:shazesq.database.windows.net,1433'
+    #     #database = 'shazamesque'
+    #     #username = os.getenv('USER_NAME')
+    #     #password = os.getenv('THE_PASSWORD')
+    #     #driver = '{ODBC Driver 18 for SQL Server}'
+    #     #connection_string = f"DRIVER={driver};SERVER={server};UID={username};PWD={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    #     ## Driver={ODBC Driver 18 for SQL Server};Server=tcp:shazesq.database.windows.net,1433;Database=shazamesque;Uid=CloudSAce2ffd30;Pwd={your_password_here};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;
+    #     #con = pyodbc.connect(connection_string)
+    #     print("========================================================")
+    #     print("Windows: `CREATE DATABASE shazamesque;` and run sql/schema.sql manually")
+    #     raise OSError
+    
+    
 
     cur = con.cursor()
     with open("sql/schema.sql", "r") as f:
