@@ -1,6 +1,6 @@
 import numpy as np
 
-from cm_helper import compute_fft
+from cm_helper import compute_stft
 
 # Provided functions for finding if two peaks are "duplicates" (too close to each other)
 def peaks_are_duplicate(peak1: tuple[int, float] = None, peak2: tuple[int,float] = None):
@@ -47,24 +47,25 @@ def find_peaks_windowed(frequencies, times, magnitude,
     """
     find the peaks in the spectrum using a sliding window
 
-    within each window spanning the entire frequency range, find the local maxima within sub tiles of the window, then select `peaks_per_window` peaks across all local maxima
+    within each window spanning the entire frequency range, find the local maxima within sub tiles of the window, with sub tile height defined by a list of `bands`
 
-    this helps avoid peaks from being clustered too close together
+    windowing across both frequency and time is used since low frequencies are amplified (equal-loudness contour), and different track sections (bridge, chorus, ..) have different average intensities;
+    we don't want areas of the spectrogram with 'high activity' to have all of the peaks while neglecting areas with low but still important activity.
 
-    use `sub_tile_height=None` to just extract top `peaks_per_window` peaks per window across the audio
+    deduplication and "proportion_keep" are just extras to help avoid peaks from being clustered too close together
     """
     constellation_map = []
         
-    # Attempt 3: sliding window across time, extract top peaks from each window after
-    #            computing local maxima within frequency bands
+    # sliding window across time, extract top peaks from each window after
+    # computing local maxima within frequency bands
     num_freq_bins, num_time_bins = magnitude.shape
     constellation_map = []
 
     # assuming fft_window_size = 1024
-    bands = [(0, 10), (10, 20), (20, 40), (40, 80), (80, 160), (160, 512)]
     #bands = [(0, 512)]
+    #bands = [(0, 40), (40, 80), (80, 160), (160, 240), (240, 512)]
+    bands = [(0, 10), (10, 20), (20, 40), (40, 80), (80, 160), (160, 512)]
     #bands = [(0, 30), (30, 60), (60, 90), (90, 120), (120, 160), (160, 330), (330, 512)]
-    bands = [(0, 40), (40, 80), (80, 160), (160, 240), (240, 512)]
 
     # slide a window across time axis
     # height: entire frequency range
@@ -103,11 +104,8 @@ def find_peaks_windowed(frequencies, times, magnitude,
 
     return remove_duplicate_peaks(constellation_map)
 
-    # Remove peaks that are too close to each other (treated as duplicates)
-    # return remove_duplicate_peaks(constellation_map)
-
 
 def create_constellation_map(audio, sr, hop_length=None) -> list[list[int]]:
-    frequencies, times, magnitude = compute_fft(audio, sr, hop_length=hop_length)
+    frequencies, times, magnitude = compute_stft(audio, sr, hop_length=hop_length)
     constellation_map = find_peaks(frequencies, times, magnitude)
     return constellation_map

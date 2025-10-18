@@ -1,21 +1,22 @@
 # Shazam-App-Template
 
-This will be the backbone of your Shazam clone applications for the rest of the semester. You may fork or copy files from this repository into your own repository in order to get started. Ignore implementing any code in cm_helper.py and cm_visualizations.py, this is helper code that is not necessary for the algorithm behind this project.
+This will be the backbone of your Shazam clone applications for the rest of the semester. You may fork or copy files from this repository into your own repository in order to get started.
 
-# Week 3:
+Provided helper files (no need to implement any code):
+- `dataloader.py` - interface to work with a tracks dataset as a list of dictionaries (`dataloader.load()`)
+- `cm_helper.py` - audio preprocessing, STFT computation, test sample creation
+- `cm_visualizations.py` - plots spectrograms
+- `search.py` - detailed implementation of audio search
 
-1. Complete TODOs in const_map.py to implement our functions for constellation mapping
-2. Visualize the same audio file using cm_visualizations.py and compare it to our solution. Are they similar?
+# Week 4
 
-Note: If using WSL: Use explorer.exe <\_.html> to visualize your spectrogram peaks.
+## TODO:
+1) 
+2) Complete TODOs in hasher.py to implement our function for fingerprinting
+3) 
+4) 
 
-Solutions are in test_spec\_"audio_name".html
-
-3. Complete TODOs in hasher.py to implement our function for fingerprinting
-
-4. Use test_hash.py to test your hash creation. Check pb_short_hashed.txt for answers/
-
-- MDST Shazam Library - [download zip file here](https://drive.google.com/drive/folders/1Ui7o23sJjZB6tYUnoAffurmK0YB5nRVv?usp=sharing)
+MDST Shazam Library - [download zip file here](https://drive.google.com/drive/folders/1Ui7o23sJjZB6tYUnoAffurmK0YB5nRVv?usp=sharing)
 
 ## Loading audio data:
 
@@ -37,3 +38,17 @@ print(tracks_info[0])
     #'audio_path': 'tracks/audio/Gorillaz_PlasticBeachfeatMickJonesandPaulSimonon_pWIx2mz0cDg.mp3'
 #}
 ```
+
+# Week 3:
+
+1. Complete TODOs in const_map.py to implement our functions for constellation mapping
+2. Visualize the same audio file using cm_visualizations.py and compare it to our solution. Are they similar?
+
+Note: If using WSL: Use explorer.exe <\_.html> to visualize your spectrogram peaks.
+
+Solutions are in test_spec\_"audio_name".html
+
+3. Complete TODOs in hasher.py to implement our function for fingerprinting
+
+4. Use test_hash.py to test your hash creation. Check pb_short_hashed.txt for answers/
+

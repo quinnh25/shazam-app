@@ -1,10 +1,10 @@
-from cm_helper import compute_fft, preprocess_audio
+from cm_helper import compute_stft, preprocess_audio
 from const_map import find_peaks
 from hasher import create_hashes
 
 path = "audio_samples/pb_recording_short.wav"
 audio, sr = preprocess_audio(path)
-frequencies, times, magnitudes = compute_fft(audio, sr)
+frequencies, times, magnitudes = compute_stft(audio, sr)
 constellation_map = find_peaks(frequencies, times, magnitudes)
 fingerprints = create_hashes(constellation_map, song_id=1, sr=sr)
 print(f"Number of fingerprints: {len(fingerprints)}")

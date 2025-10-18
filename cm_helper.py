@@ -2,13 +2,13 @@ import numpy as np
 import librosa
 from scipy import signal
 
-def compute_fft(audio, sr, n_fft: int = None, hop_length: int = None):
+def compute_stft(audio, sr, n_fft: int = None, hop_length: int = None):
     """
-    compute a fast fourier transform on the audio data to get the frequency spectrum
+    compute a short-time fourier transform on the audio data to get the frequency spectrum
 
     turns raw audio data into a "spectrogram"
 
-    n_fft (int): FFT size; number of samples used to calculate each FFT
+    n_fft (int): FFT size; number of samples used to calculate each FFT (considered equivalent to 'window_size')
 
     hop_length (int): number of samples the window slides over each time (step size)
     

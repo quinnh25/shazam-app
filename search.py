@@ -1,10 +1,10 @@
-import os
-import pathlib
 import numpy as np
 from collections import defaultdict
-from hasher import create_hashes
+
 from cm_helper import preprocess_audio
 from const_map import create_constellation_map
+from hasher import create_hashes
+from DBcontrol import connect, retrieve_hashes
 
 def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, int]], dict[int, set[int, int]]]:
     """
@@ -17,11 +17,9 @@ def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, in
     
     """
     con = connect()
-    # buffered=True here solves an issue that occurs when repeatedly calling
-    #               retrieve_hashes()
-    # https://stackoverflow.com/questions/29772337/python-mysql-connector-unread-result-found-when-using-fetchone
     cur = con.cursor()
 
+    # An Industrial-Strength Audio Search Algorithm
     # 2.3: Searching and Scoring
     
     # Each hash from the sample is used to search in the 
@@ -88,8 +86,8 @@ def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, in
 
         # The score of the match is the number of matching points
         # in the histogram peak
-        scores[song_id] = hist.max()
         #scores[song_id] = max(hist.values()) if hist else 0
+        scores[song_id] = hist.max()
 
     scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     con.close()
@@ -98,22 +96,18 @@ def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, in
 
 def recognize_music(sample_audio_path: str, sr: None|int = None, remove_sample: bool = True) -> list[tuple[int, int]]:
     """
-    returns sorted list of `(song_id, score)` tuples
-    
-    Access top prediction with `scores[0][0]`
+    returns sorted list of `(song_id, score)` tuples, access top prediction with `scores[0][0]`
 
     ```
-    init_db(tracks_dir = "tracks-2025-07-22", n_songs=5)
+    # add songs to db
+    DBcontrol.add_songs(...)
 
     # record from microphone
-    sample_wav_path = record_audio(n_seconds = 5)
+    sample_audio_path = "audio_samples/pb_recording_short.wav"
 
-    song_id = recognize_music(sample_wav_path)[0][0]
+    # correct recognition if song_id 
+    # corresponds to Gorillaz - Plastic Beach
+    song_id = recognize_music(sample_audio_path)[0][0]
+    ```
     """
-    sample, sr = preprocess_audio(sample_audio_path, sr=sr)
-    if remove_sample:
-        os.remove(sample_audio_path)
-    constellation_map = create_constellation_map(sample, sr)
-    hashes = create_hashes(constellation_map, None, sr)
-    scores, time_pair_bins = score_hashes(hashes)
-    return scores, time_pair_bins
+    pass

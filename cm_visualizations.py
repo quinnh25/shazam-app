@@ -1,7 +1,7 @@
 import numpy as np
 import plotly.graph_objects as go
 
-from cm_helper import compute_fft, preprocess_audio
+from cm_helper import compute_stft, preprocess_audio
 from const_map import find_peaks
 
 
@@ -13,7 +13,7 @@ def convert_to_decibel(magnitude: np.array):
 
 def visualize_map_interactive(audio_path):
     audio, sr = preprocess_audio(audio_path)
-    frequencies, times, magnitudes = compute_fft(audio, sr)
+    frequencies, times, magnitudes = compute_stft(audio, sr)
     magnitudes = convert_to_decibel(magnitudes)
     print(magnitudes.shape)
 

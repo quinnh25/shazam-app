@@ -2,13 +2,10 @@ import os
 
 import sqlite3
 import librosa
-import glob
 import pandas as pd
-import platform
-import zipfile
 from pathlib import Path
+from dataloader import load
 
-from dotenv import load_dotenv
 
 
 library = "sql/library.db"
@@ -16,7 +13,6 @@ library = "sql/library.db"
 def connect() -> tuple[sqlite3.Connection]:
     con = sqlite3.connect(library)
     return con
-
 
 def create_hash_index():
     with connect() as con:
@@ -73,27 +69,20 @@ def add_song(track_info: dict) -> str:
 
 
 def add_songs(audio_directory: str = "./tracks", n_songs: int = None, specific_songs: list[str] = None) -> None:
-    if n_songs == 0:
-        return
-    
-        
-    df = pd.read_csv(os.path.join(audio_directory, "tracks.csv"))
-    # set audio_path to a relative path originating from current directory
-    df["audio_path"] = df["audio_path"].apply(lambda x: str(Path(audio_directory)/x))
+    tracks_info = load(audio_directory)
 
     if n_songs is not None:
-        df = df.head(n_songs)
+        tracks_info = tracks_info[:min(n_songs, len(tracks_info))]
 
-    for row in df.to_dict(orient="records"):
+    for track_info in tracks_info:
         if specific_songs is not None: 
-            if row["title"] in specific_songs:
-                add_song(row)
+            if track_info["title"] in specific_songs:
+                add_song(track_info)
         else:
-            add_song(row)
+            add_song(track_info)
 
 def retrieve_song(song_id) -> dict|None:
     with connect() as con:
-        # TODO SQLAlchemy error (consider using SQLAlchemy) - just do a normal cur.fetchall()
         df = pd.read_sql_query("SELECT * FROM songs WHERE id = ?", con, params=(song_id,))
         if df.empty:
             return None
