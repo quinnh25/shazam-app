@@ -5,9 +5,9 @@ from scipy import signal
 def create_address(anchor: tuple[int, int], target: tuple[int, int], sr: int) -> int:
     
     # TODO: get relevant information from the anchor and target points
-    anchor_freq = None
-    target_freq = None
-    deltaT = None
+    anchor_freq = anchor[1]
+    target_freq = target[1]
+    deltaT = target_freq - anchor_freq
 
     ##############################################
     # Creating a 32 bit hash f1:f2:dt (2002 paper)
