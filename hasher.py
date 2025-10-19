@@ -27,7 +27,9 @@ def create_address(anchor: tuple[int, int], target: tuple[int, int], sr: int) ->
     target_freq = (target_freq / max_frequency) * (2 ** n_bits)
     
     # TODO: compute the hash using bitwise operations
-    # Hint: bit shifting to obtain 32 bit hash
+    # Hint: bit shifting to obtain 32 bit hash: 
+    # 1<<10 = 1024, [ 1 | (1 << 10) ] = 1025
+    # https://wiki.python.org/moin/BitwiseOperators
     # int(anchor_freq)         occupies bits 0-9,    anchor_freq <= 1023
     # int(target_freq) << 10   occupies bits 10-19,  target_freq <= 1023
     # int(deltaT) << 20        occupies bits 20-31,  deltaT <= 4095

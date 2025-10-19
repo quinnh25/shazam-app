@@ -6,14 +6,26 @@ Provided helper files (no need to implement any code):
 
 - `dataloader.py` - interface to work with a tracks dataset as a list of dictionaries (`dataloader.load()`)
 - `cm_helper.py` - audio preprocessing, STFT computation, test sample creation
-- `cm_visualizations.py` - plots spectrograms
+- `cm_visualizations.py` - plots spectrograms with peaks
+- `DBcontrol.py` - database for managing many hashes (we'll investigate this later)
+- `predict_song.py` - creates a `/predict` endpoint for interfacing with music recognition model
+
+Files:
+
+- `const_map.py` - constellation mapping
+- `hasher.py` - creates hashes for representing pairs of peaks in database
 - `search.py` - detailed implementation of audio search
+
+Testing:
+
+- `test_hash.py` - creates audio fingerprints
+- `test_search.py` - sends a request to `/predict` endpoint
 
 # Week 4
 
 ## TODO:
 
-1. Download the week3tracks.zip files listed below (1GB so be warned) for th
+1. Download the week3tracks.zip files listed below (1GB so be warned)
 2. Complete TODOs in hasher.py to implement our function for fingerprinting
 3. Investigate predict_song.py. Try to understand how data is being passed into the Flask app.
 4. Run test_search.py with predict_song.py running in the background to test your audio search
@@ -25,6 +37,10 @@ MDST Shazam Library - [download zip file here](https://drive.google.com/drive/fo
 
 ```python
 from dataloader import extract_zip, load
+
+# download tracks from Google Drive link above:
+# week3tracks_tiny.zip       mp3 format, 92 MB
+# week3tracks.zip           flac format, 1 GB
 
 # extract zip archive (can do this from your file manager also)
 extract_zip(zip_file="./week3tracks_tiny.zip", audio_directory = "./tracks")
