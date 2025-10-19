@@ -3,7 +3,6 @@ from collections import defaultdict
 
 from cm_helper import preprocess_audio
 from const_map import create_constellation_map
-from hasher import create_hashes
 from DBcontrol import connect, retrieve_hashes
 
 def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, int]], dict[int, set[int, int]]]:
