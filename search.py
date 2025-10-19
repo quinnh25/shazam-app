@@ -33,15 +33,18 @@ def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, in
     # The time pairs are distributed into bins according to the 
     # track ID associated with the matching database hash
 
+    # TODO: Implement the steps above, storing source and sample time pairs in a 
+    # bin (dictionary) for each song.
+
     time_pair_bins = defaultdict(set)
+    
     for address, (sampleT, _) in hashes.items():
+        
+        # Hint: This line retrieves matchin hashes froom the database in the format
+        # (hash_val, time_stamp, song_id)
         matching_hashes = retrieve_hashes(address, cur)
-        if matching_hashes is not None:
-            #print(matching_hashes)
-            #exit(0)
-            for _, sourceT, song_id in matching_hashes:
-                time_pair_bins[song_id].add((sourceT, sampleT))
-                # print(f"Match found: song_id={song_id}, sourceT={sourceT}, sampleT={sampleT}")
+        
+        # TODO: Finish the loop by adding (sourceT, sampleT) pairs to the appropriate bin
             
     # After all sample hashes have been used to search in the
     # database to form matching time pairs, the bins are scanned
