@@ -1,6 +1,8 @@
 import numpy as np
+import os
 from collections import defaultdict
 
+from hasher import create_hashes
 from cm_helper import preprocess_audio
 from const_map import create_constellation_map
 from DBcontrol import connect, retrieve_hashes
@@ -39,6 +41,7 @@ def score_hashes(hashes: dict[int, tuple[int, int]]) -> tuple[list[tuple[int, in
             #exit(0)
             for _, sourceT, song_id in matching_hashes:
                 time_pair_bins[song_id].add((sourceT, sampleT))
+                # print(f"Match found: song_id={song_id}, sourceT={sourceT}, sampleT={sampleT}")
             
     # After all sample hashes have been used to search in the
     # database to form matching time pairs, the bins are scanned
@@ -109,4 +112,10 @@ def recognize_music(sample_audio_path: str, sr: None|int = None, remove_sample: 
     song_id = recognize_music(sample_audio_path)[0][0]
     ```
     """
-    pass
+    sample, sr = preprocess_audio(sample_audio_path, sr=sr)
+    # if remove_sample:
+    #     os.remove(sample_audio_path)
+    constellation_map = create_constellation_map(sample, sr)
+    hashes = create_hashes(constellation_map, None, sr)
+    scores, time_pair_bins = score_hashes(hashes)
+    return scores, time_pair_bins

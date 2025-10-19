@@ -1,19 +1,38 @@
 import os
-from search import search_song_in_db
+import requests
 
+# Initialize the database
+from cm_helper import add_noise
+from DBcontrol import init_db, retrieve_song_ids
 
-def initialise_db(db_path: str = "sql/library.db"):
-    """
-    Initialise the database connection
-
-    If the database does not exist at `db_path`, create it
-    """
-    if not os.path.exists(db_path):
-        from DBcontrol import create_tables
-        create_tables(db_path)
+def get_prediction(audio_path: str) -> dict:
     
-    return
+    # TODO: Set the url to the url you used in predict_fruit.py
+    url = "http://localhost:5003/predict"
+    
+    with open(audio_path, 'rb') as audio:
+        files = {'audio': (os.path.basename(audio_path), audio, 'audio/mpeg')}
+        response = requests.post(url, files=files)
+    
+    if response.status_code == 200:
+        result = response.json()
+        return result['titles']
+    else:
+        print(f"Failed to get prediction: {response.status_code}")
+        return None
 
-# Add 5 songs to our database for testing
-songs = []
 
+
+# TODO: from tracks/audio, select the path of a file to identify
+audio = "tracks/audio/Charlixcx_Girlsoconfusingfeaturinglorde_0q3K6FPzY18.flac"
+
+# add some noise to the audio for testing
+# audio_noisy = add_noise(audio)
+
+# save the noisy audio to a temporary file
+# noisy_audio_path = "temp_noisy_audio.mp3"
+# import soundfile as sf
+# sf.write(noisy_audio_path, audio_noisy, 44100)
+
+# print metadata from the prediction
+print(get_prediction(audio))

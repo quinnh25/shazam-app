@@ -6,6 +6,10 @@ import pandas as pd
 from pathlib import Path
 from dataloader import load
 
+from cm_helper import preprocess_audio
+from hasher import create_hashes
+from const_map import create_constellation_map
+
 
 
 library = "sql/library.db"
@@ -69,12 +73,16 @@ def add_song(track_info: dict) -> str:
 
 
 def add_songs(audio_directory: str = "./tracks", n_songs: int = None, specific_songs: list[str] = None) -> None:
+    
     tracks_info = load(audio_directory)
+    print(tracks_info)
 
     if n_songs is not None:
         tracks_info = tracks_info[:min(n_songs, len(tracks_info))]
 
+    print(tracks_info)
     for track_info in tracks_info:
+        print("Adding:", track_info["title"])
         if specific_songs is not None: 
             if track_info["title"] in specific_songs:
                 add_song(track_info)
@@ -139,11 +147,23 @@ def add_hashes(hashes: dict[int, tuple[int, int]]):
         con.commit()
 
 def retrieve_hashes(hash_val: int, cursor: sqlite3.Cursor) -> tuple[int, int, int]|None:
+    """
+    returns list of (hash_val, time_stamp, song_id) tuples matching given hash_val
+    
+    Input: hash_val: hash value we are searching for
+    
+    Output: list of (hash_val, time_stamp, song_id) tuples
+    
+    """
     cursor.execute("SELECT hash_val, time_stamp, song_id FROM hashes WHERE hash_val = ?", (hash_val,))
     result = cursor.fetchall()
     return result
 
+
 def create_tables():
+    """
+    Creates necessary tables in the database
+    """
     if os.path.exists(library):
         os.remove(library)
     with sqlite3.connect(library) as con:
@@ -152,4 +172,48 @@ def create_tables():
             schema_sql = f.read()
         cur.executescript(schema_sql)
         con.commit()
+        
+def init_db(tracks_dir: str = None, n_songs: int = None, specific_songs: list[str] = None):
+    """
+    tracks_dir:
+        Path to the audio dataset downloaded by `musicdl`. 
+        Default is to look for a folder or zip archive matching the pattern "`tracks*`"
+    n_songs:
+        Take a sample from the top of the tracks dataset. Default is to read all songs
 
+    """
+    create_tables()
+    add_songs("./tracks", n_songs, specific_songs)
+    compute_source_hashes()
+
+def compute_source_hashes(song_ids: list[int] = None, resample_rate: None|int = 11025):
+    """
+    `song_ids=None` (default) use all song_ids from database
+
+    `resample_rate=None` to use original sampling rate from file
+
+    Assumes all songs are the same sampling rate
+    """
+    if song_ids is None:
+        song_ids = retrieve_song_ids()
+    
+    for song_id in song_ids:
+        print(f"{song_id:03} ================================================")
+        song = retrieve_song(song_id)
+        print(f"{song['title']} by {song['artist']}")
+        #duration_s = song["duration_s"]
+        audio_path = song["audio_path"]
+
+        #waveform = song["waveform"]
+        #audio_path = "temp_audio.mp3"
+        #with open(audio_path, 'wb') as f:
+            #f.write(waveform)
+        #print(audio_path)
+
+        audio, sr = preprocess_audio(audio_path, sr=resample_rate)
+        constellation_map = create_constellation_map(audio, sr)
+        hashes = create_hashes(constellation_map, song_id, sr)
+        add_hashes(hashes)
+    
+    create_hash_index()
+    return
