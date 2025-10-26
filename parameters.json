@@ -1,0 +1,36 @@
+{
+  "constellation_mapping": {
+    "cm_window_size": 10,
+    "candidates_per_band": 7,
+    "bands": [
+      [
+        0,
+        20
+      ],
+      [
+        20,
+        40
+      ],
+      [
+        40,
+        80
+      ],
+      [
+        80,
+        160
+      ],
+      [
+        160,
+        320
+      ],
+      [
+        320,
+        512
+      ]
+    ]
+  },
+  "hashing": {
+    "fanout_t": 200,
+    "fanout_f": 1500
+  }
+}
