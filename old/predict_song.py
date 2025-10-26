@@ -16,7 +16,6 @@ CORS(app)
 library = "sql/library.db"
 idx = 0
 
-
 def get_yt_metadata(youtube_url: str, audio_path: str) -> dict:
     track_data = {}
     url = f"https://www.youtube.com/oembed?format=json&url={youtube_url}"
