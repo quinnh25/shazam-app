@@ -23,22 +23,23 @@ def remove_duplicate_peaks(peaks: list[tuple[int, float]]):
     
     # TODO: sort peaks by time
     peaksc.sort(key=lambda x: x[0])
-
+    
     # TODO: for each peak, search for duplicates within the next 15 peaks (ordered by time)
-    for i in range(len(peaksc)):
-        for j in range(len(peaksc[i:min(i+15, len(peaksc)-1)])):
-            j = j+i+1
-            if peaks_are_duplicate(peaksc[i], peaksc[j]):
-                peaksc[j] = None
+    for index, peak in enumerate(peaksc):
+        i = 0
+        size = min(15, len(peaksc) - index - 1)
+        while (i < size):
+            #i goes from 0 to 14
+            if (peaks_are_duplicate(peaksc[index], peaks[index + i + 1])):
+                peaksc[index + i + 1] = None
+            i += 1
+
     return [peak for peak in peaksc if peak is not None]
-            
-    # return unique_peaks
 
 
 def find_peaks(frequencies, times, magnitude,
                              window_size=10,
                              candidates_per_band=6):
-
     return find_peaks_windowed(frequencies, times, magnitude, window_size, candidates_per_band)
 
 def find_peaks_windowed(frequencies, times, magnitude,
@@ -46,63 +47,71 @@ def find_peaks_windowed(frequencies, times, magnitude,
                              candidates_per_band=6):
     """
     find the peaks in the spectrum using a sliding window
-
-    within each window spanning the entire frequency range, find the local maxima within sub tiles of the window, with sub tile height defined by a list of `bands`
-
-    windowing across both frequency and time is used since low frequencies are amplified (equal-loudness contour), and different track sections (bridge, chorus, ..) have different average intensities;
-    we don't want areas of the spectrogram with 'high activity' to have all of the peaks while neglecting areas with low but still important activity.
-
-    deduplication and "proportion_keep" are just extras to help avoid peaks from being clustered too close together
+    within each window spanning the entire frequency range, find the local maxima within sub tiles of the window, then select `peaks_per_window` peaks across all local maxima
+    this helps avoid peaks from being clustered too close together
+    use `sub_tile_height=None` to just extract top `peaks_per_window` peaks per window across the audio
     """
     constellation_map = []
         
-    # sliding window across time, extract top peaks from each window after
-    # computing local maxima within frequency bands
+    # Attempt 3: sliding window across time, extract top peaks from each window after
+    #            computing local maxima within frequency bands
     num_freq_bins, num_time_bins = magnitude.shape
     constellation_map = []
-
-    # assuming fft_window_size = 1024
-    #bands = [(0, 512)]
-    #bands = [(0, 40), (40, 80), (80, 160), (160, 240), (240, 512)]
+    
+    # TODO: create frequency bands based on logarithmic scale. Assume fft_window_size = 1024
+    # Hint: start from 0-40Hz
     bands = [(0, 10), (10, 20), (20, 40), (40, 80), (80, 160), (160, 512)]
-    #bands = [(0, 30), (30, 60), (60, 90), (90, 120), (120, 160), (160, 330), (330, 512)]
-    from parameters import read_parameters
-    window_size, candidates_per_band, bands = read_parameters("constellation_mapping")
+    #bands = [(0, 40), (40, 80), (80, 160), (160, 240), (240, 512)]
+
     # slide a window across time axis
     # height: entire frequency range
     # width:  window_size
     for t_start in range(0, num_time_bins, window_size):
+        # TODO: Get the window of frequencies we want to work with
         t_end = min(t_start + window_size, num_time_bins)
-        window = magnitude[:, t_start:t_end]
+        window_mag = magnitude[:, t_start:t_end]
 
         peak_candidates = []
 
-        # find local maxima within bands of the window
-        # height: variable based on current band
-        # width:  window_size
-        #for f_start in range(0, num_freq_bins, sub_tile_height):
-            #f_end = min(f_start + sub_tile_height, num_freq_bins)
+        # TODO: Find local maxima within the frequency bands of each window
         for f_start, f_end in bands:
-            sub_tile = window[f_start:f_end, :]
+            # TODO: Get the frequency band for this window
+            freq_square = window_mag[f_start:f_end,:]
 
-            # Flatten and get indices of top candidates in this frequency band
-            flat_indices = np.argpartition(sub_tile.ravel(), -candidates_per_band)[-candidates_per_band:]
+            # TODO: Find the indices of the top `candidates_per_band` peaks in the freq_square
+            # Hint: Flatten the 2D freq_square to 1D using np.argpartition
+            #np.ravel(freq_square)
+            flat_indices = np.argpartition(freq_square.ravel(), -candidates_per_band) #len(freq_square)
 
-            for idx in flat_indices:
-                f_local, t_local = np.unravel_index(idx, sub_tile.shape)
+            # 
+            for idx in flat_indices[-candidates_per_band:]:
+                # TODO: calculate the original time and frequency indices from the flattened candidate indices
+                # Hint: use np.unravel_index and .shape of freq_square to go from 1D index to 2D index
+                f_local, t_local = np.unravel_index(idx, freq_square.shape)
                 f_idx = f_start + f_local
                 t_idx = t_start + t_local
                 mag = magnitude[f_idx, t_idx]
+                
+                # Append the original time index (t_idx), frequency index (f_idx), and magnitude (mag)
                 peak_candidates.append((t_idx, f_idx, mag))
 
         # Keep top peaks per time window (sorted by magnitude)
         proportion_keep = 0.95
+        
+        # TODO: Sort the peak candidates by magnitude, descending
         peak_candidates.sort(key=lambda x: x[2], reverse=True)
-        for t_idx, f_idx, _ in peak_candidates[0:int(np.floor(proportion_keep*len(peak_candidates)))]:
-            freq = frequencies[f_idx]
-            peak = (t_idx, freq)
-            constellation_map.append(peak)
+        
+        # TODO: Keep the top proportion_keep of peak candidates and 
+        # append the time index and frequency to the constellation map
+        stell_cutoff = proportion_keep * len(peak_candidates)
 
+        for star in range(int(stell_cutoff)):
+            #extract freq and the time before appending
+            frequency = frequencies[peak_candidates[star][1]]
+            time = peak_candidates[star][0]
+            constellation_map.append((time, frequency))
+
+    # Remove peaks that are too close to each other (treated as duplicates)
     return remove_duplicate_peaks(constellation_map)
 
 
