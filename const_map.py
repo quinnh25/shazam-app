@@ -63,6 +63,9 @@ def find_peaks_windowed(frequencies, times, magnitude,
     bands = [(0, 10), (10, 20), (20, 40), (40, 80), (80, 160), (160, 512)]
     #bands = [(0, 40), (40, 80), (80, 160), (160, 240), (240, 512)]
 
+    from parameters import read_parameters
+    window_size, candidates_per_band, bands = read_parameters("constellation_mapping")
+
     # slide a window across time axis
     # height: entire frequency range
     # width:  window_size

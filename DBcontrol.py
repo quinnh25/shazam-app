@@ -10,8 +10,6 @@ from cm_helper import preprocess_audio
 from hasher import create_hashes
 from const_map import create_constellation_map
 
-
-
 library = "sql/library.db"
 
 def connect() -> tuple[sqlite3.Connection]:

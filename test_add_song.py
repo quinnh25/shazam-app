@@ -1,7 +1,6 @@
 import os
 import requests
 
-
 def add_song(youtube_url: str) -> dict:
     
     # TODO: Set the url to the url you used in predict_song.py
@@ -27,12 +26,12 @@ def add_song(youtube_url: str) -> dict:
 youtube_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 # add some noise to the audio for testing
-# audio_noisy = add_noise(audio)
+#audio_noisy = add_noise(audio)
 
 # save the noisy audio to a temporary file
-# noisy_audio_path = "temp_noisy_audio.mp3"
-# import soundfile as sf
-# sf.write(noisy_audio_path, audio_noisy, 44100)
+#noisy_audio_path = "temp_noisy_audio.mp3"
+#import soundfile as sf
+#sf.write(noisy_audio_path, audio_noisy, 44100)
 
 # print metadata from the prediction
 print(add_song(youtube_url))

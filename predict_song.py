@@ -70,28 +70,27 @@ def predict():
     
     audio_file = request.files['audio']
     
-    # print(audio_file.path)
+    print(audio_file.path)
     
     # if not already a wav file then convert to wav
-    # if audio_file.filename.endswith('.webm'):
-    
-    # Create a temporary file for the webm conversion
-    # with tempfile.NamedTemporaryFile(delete=False, suffix='.webm') as temp_webm:
-    #     audio_file.save(temp_webm.name)
-    #     temp_webm_path = temp_webm.name
+    if audio_file.filename.endswith('.webm'):
+        # Create a temporary file for the webm conversion
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.webm') as temp_webm:
+            audio_file.save(temp_webm.name)
+            temp_webm_path = temp_webm.name
     
     # Convert to WAV using FFmpeg
-    # temp_audio_path = temp_webm_path.replace('.webm', '.wav')
+    temp_audio_path = temp_webm_path.replace('.webm', '.wav')
     
-    # print(f"Converting {temp_webm_path} to {temp__path}")
+    #print(f"Converting {temp_webm_path} to {temp__path}")
     
-    # subprocess.run([
-    #     'ffmpeg', '-i', temp_webm_path,
-    #     '-ar', '44100',  # Sample rate
-    #     '-ac', '1',      # Mono
-    #     '-y',            # Overwrite
-    #     temp_audio_path
-    # ], check=True, capture_output=True)
+    subprocess.run([
+         'ffmpeg', '-i', temp_webm_path,
+         '-ar', '44100',  # Sample rate
+         '-ac', '1',      # Mono
+         '-y',            # Overwrite
+         temp_audio_path
+     ], check=True, capture_output=True)
     
     # Use scipy to parse the WAV file properly
     #sample_rate, audio_array = wavfile.read(temp_audio_path)
@@ -103,7 +102,10 @@ def predict():
     #scores, _ = recognize_music("./tracks/audio/" + audio_file.filename)
     scores, _ = recognize_music(audio_file.filename)
 
-    
+    # audio = "./tracks/audio/TylerTheCreator_DOGTOOTH_QdkbuXIJHfk.flac"
+    audio = "./audio_samples/Dogtooth_rec.flac"
+    print(recognize_music(audio))
+
     urls = []
     names = []
     for id in scores:
@@ -111,7 +113,7 @@ def predict():
         names.append(db.retrieve_song(id[0])["title"])
 
     # this line will be necessary for recorded files but not right now
-    # os.remove("temp_audio_path")
+    os.remove("temp_audio_path")
     
     # return the best prediction in a JSON object
     return jsonify({
@@ -120,7 +122,8 @@ def predict():
         'urls': urls[0],
         'titles': names[0]
     })
-    
+
+@app.route('/add', methods=['POST']) 
 # TODO: add an endpoint (@app.route) for adding a song to the database
 def add_song():
     """
@@ -130,16 +133,17 @@ def add_song():
     """
     
     # TODO: Add a statement here to make sure 'youtube_url' is in request.form
-    pass
+    if 'youtube_url' not in request.form:
+        return jsonify({'error': 'youtube_url is required'}), 400
 
     # TODO: Extract the YouTube URL from the form data
     # HINT: what did add_song send to the endpoint?
-    #       files = {'youtube_url': (None, youtube_url, 'text/plain')}
-    #       response = requests.post(url, files=files)  # <-- access files 
-    #                                                         dict via request.files
-    # from flask import request
+    #files = {'youtube_url': (None, youtube_url, 'text/plain')}
+    #response = requests.post(url, files=files)  # <-- access filesdict via request.files
+    #from flask import request
 
-    youtube_url = None
+    print(request.files)
+    youtube_url = request.files['youtube_url'][1]
     
     # TODO: Check if the song already exists in the database using dba.check_if_song_exists
     # Implement this function in DB_adder.py if not already done
@@ -167,7 +171,7 @@ def add_song():
 
 if __name__ == '__main__':
     # Initialize the database using our command for now
-    init_db(n_songs=4)
+    #init_db(n_songs=4)
     
     # Run the Flask app at this given host and port
     app.run(host='0.0.0.0', port=5003, debug=True)
