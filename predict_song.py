@@ -70,6 +70,32 @@ def predict():
     
     audio_file = request.files['audio']
     
+        # React-Native does not record in flac files so we need to convert our audio to flac file manuallys
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.webm') as temp_webm:
+        audio_file.save(temp_webm.name)
+        temp_webm_path = temp_webm.name
+
+    # Convert to flac using FFmpeg
+    temp_audio_path = temp_webm_path.replace('.webm', '.flac')
+
+    print(f"Converting {temp_webm_path} to {temp_audio_path}")
+
+    subprocess.run([
+        'ffmpeg', '-i', temp_webm_path,
+        '-ar', '44100',  # Sample rate
+        '-ac', '1',      # Mono
+        '-y',            # Overwrite
+        temp_audio_path
+    ], check=True, capture_output=True)
+
+    # TODO: Use a helper function to parse the flac file properly
+    audio_array, sample_rate = None
+
+    # Convert to float32 and normalize
+    audio_array = audio_array.astype(np.float32) / (2**15)
+
+    print(f"Audio loaded: {len(audio_array)} samples at {sample_rate}Hz")
+    
     # print(audio_file.path)
     
     # if not already a wav file then convert to wav
