@@ -89,7 +89,8 @@ def predict():
     ], check=True, capture_output=True)
 
     # TODO: Use a helper function to parse the flac file properly
-    audio_array, sample_rate = None
+    import soundfile as sf
+    audio_array, sample_rate = sf.read(temp_audio_path)
 
     # Convert to float32 and normalize
     audio_array = audio_array.astype(np.float32) / (2**15)
@@ -156,7 +157,7 @@ def add_song():
     """
     
     # TODO: Add a statement here to make sure 'youtube_url' is in request.form
-    pass
+    print("adding our song")
 
     # TODO: Extract the YouTube URL from the form data
     # HINT: what did add_song send to the endpoint?

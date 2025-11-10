@@ -108,20 +108,24 @@ export default function Recorder() {
 
       // Lets encode the URI of our recording to a blob
       const responsee = await fetch(uri);
-      const blob = await responsee.blob();
+      //const blob = await responsee.blob();
 
       // Create a file from the blob
-      const file = new File([blob], "audio.flac", { type: "audio/flac" });
+      //const file = new File([blob], "audio.flac", { type: "audio/flac" });
 
-      console.log("Audio file being sent:", file);
+      //console.log("Audio file being sent:", file);
 
       // Append the actual file to FormData
-      formData.append("audio", file);
+      formData.append("audio", {
+        uri: uri,
+        type: "audio/flac",
+        name: "audio.flac"
+      } as any);
 
       console.log("Sending POST request to server...");
 
       // TODO: type in your server address here
-      const predict_endpoint = "http://35.2.224.99.5003/predict";
+      const predict_endpoint = "http://35.3.232.66:5003/predict";
 
       // This is our first JavaScript promise which is a fetch request to the server
       // We start by making a post request to our prediction endpoint using the form data above
@@ -162,7 +166,7 @@ export default function Recorder() {
     formData.append("youtube_url", song_url);
 
     // TODO: type in your server address here
-    const add_endpoint = "http://35.2.224.99.5003/add";
+    const add_endpoint = "http://35.3.232.66:5003/add";
 
     // TODO: follow handlePrediction's fetch structure to make a JavaScript fetch
     fetch(add_endpoint, {
@@ -195,7 +199,7 @@ export default function Recorder() {
                 />
               ) : (
                 <Image
-                  source={require("../../assets/images/free-microphone-icon.png")}
+                  source={require("../../assets/images/microphone-icon.png")}
                   style={{ width: 100, height: 100 }}
                 />
               )}

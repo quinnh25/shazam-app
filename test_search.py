@@ -27,7 +27,7 @@ def get_prediction(audio_path: str) -> dict:
 
 
 # TODO: from tracks/audio, select the path of a file to identify
-audio = "audio_samples/Dogtooth_rec.flac"
+audio = "audio_samples/Hensonn_Sahara.flac"
 
 # add some noise to the audio for testing
 # audio_noisy = add_noise(audio)
